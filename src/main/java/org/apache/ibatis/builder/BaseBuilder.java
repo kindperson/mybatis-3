@@ -29,11 +29,21 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * xml buile的基类
  * @author Clinton Begin
  */
 public abstract class BaseBuilder {
+  /**
+   * mybatis基础配置的对象
+   */
   protected final Configuration configuration;
+  /**
+   * 别名注册类
+   */
   protected final TypeAliasRegistry typeAliasRegistry;
+  /**
+   * 数据类型注册类
+   */
   protected final TypeHandlerRegistry typeHandlerRegistry;
 
   public BaseBuilder(Configuration configuration) {

@@ -50,6 +50,10 @@ public class XPathParser {
   private Properties variables;
   private XPath xpath;
 
+  /**
+   * 通过xml形式的字符串创建对象
+   * @param xml
+   */
   public XPathParser(String xml) {
     commonConstructor(false, null, null);
     this.document = createDocument(new InputSource(new StringReader(xml)));
@@ -71,6 +75,10 @@ public class XPathParser {
   }
 
 
+  /**
+   * 通过字符流创建对象
+   * @param reader
+   */
   public XPathParser(Reader reader) {
     commonConstructor(false, null, null);
     this.document = createDocument(new InputSource(reader));
@@ -91,7 +99,10 @@ public class XPathParser {
   }
 
 
-
+  /**
+   * 通过字节流创建对象
+   * @param inputStream
+   */
   public XPathParser(InputStream inputStream) {
     commonConstructor(false, null, null);
     this.document = createDocument(new InputSource(inputStream));
@@ -110,7 +121,10 @@ public class XPathParser {
   }
 
 
-
+  /**
+   * 通过xml的ocument创建对象
+   * @param document
+   */
   public XPathParser(Document document) {
     commonConstructor(false, null, null);
     this.document = document;
@@ -218,15 +232,25 @@ public class XPathParser {
 
   private Object evaluate(String expression, Object root, QName returnType) {
     try {
+      //调用xpath类进行相应的解析。
+      //注意returnType参数，虽然evaluate返回的数据类型是Object的，但是如果指定了错误的returnType，那么在进行类型转换时将会报类型转换异常
       return xpath.evaluate(expression, root, returnType);
     } catch (Exception e) {
       throw new BuilderException("Error evaluating XPath.  Cause: " + e, e);
     }
   }
 
+  /**
+   * 创建xml的document对象
+   *  important: this must only be called AFTER common constructor
+   *  为什么必须在调用commonConstructor函数后才能调用这个函数呢？因为这个函数里面用到了两个属性：validation和entityResolver
+   *  如果在这两个属性没有设置前就调用这个函数，就可能会导致这个类内部属性冲突
+   * @param inputSource
+   * @return
+   */
   private Document createDocument(InputSource inputSource) {
-    // important: this must only be called AFTER common constructor
     try {
+      //创建document时用到了两个类：DocumentBuilderFactory和DocumentBuilder。
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       factory.setValidating(validation);
 
@@ -259,10 +283,17 @@ public class XPathParser {
     }
   }
 
+  /**
+   * 给解析类设置基本属性
+   * @param validation
+   * @param variables
+   * @param entityResolver
+   */
   private void commonConstructor(boolean validation, Properties variables, EntityResolver entityResolver) {
     this.validation = validation;
     this.entityResolver = entityResolver;
     this.variables = variables;
+    //用XPathFactory创建一个新的xpath对象
     XPathFactory factory = XPathFactory.newInstance();
     this.xpath = factory.newXPath();
   }

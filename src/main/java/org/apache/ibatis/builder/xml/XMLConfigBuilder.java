@@ -48,16 +48,30 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
+ * 读取xml配置文件类
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
 public class XMLConfigBuilder extends BaseBuilder {
 
+  /**
+   * 配置文件没有解析前为false，解析了之后为true，配置文件不能重复解析
+   */
   private boolean parsed;
+  /**
+   * xml 解析类
+   */
   private XPathParser parser;
+  /**
+   * 数据源配置信息
+   */
   private String environment;
   private ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();
 
+  /**
+   * 字符流形式的xml创建
+   * @param reader
+   */
   public XMLConfigBuilder(Reader reader) {
     this(reader, null, null);
   }
@@ -70,6 +84,10 @@ public class XMLConfigBuilder extends BaseBuilder {
     this(new XPathParser(reader, true, props, new XMLMapperEntityResolver()), environment, props);
   }
 
+  /**
+   * 字节流形式的xml 创建
+   * @param inputStream
+   */
   public XMLConfigBuilder(InputStream inputStream) {
     this(inputStream, null, null);
   }
@@ -82,6 +100,13 @@ public class XMLConfigBuilder extends BaseBuilder {
     this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
   }
 
+
+  /**
+   * 用xml解析类创建
+   * @param parser
+   * @param environment
+   * @param props
+   */
   private XMLConfigBuilder(XPathParser parser, String environment, Properties props) {
     super(new Configuration());
     ErrorContext.instance().resource("SQL Mapper Configuration");
