@@ -58,12 +58,9 @@ public class CustomizationTest {
         .isEqualTo("default");
     Assertions.assertThat(cache.getName()).isEqualTo("default");
 
-    SqlSession sqlSession = factory.openSession();
-    try {
+    try (SqlSession sqlSession = factory.openSession()) {
       CustomDefaultValueSeparatorMapper mapper = sqlSession.getMapper(CustomDefaultValueSeparatorMapper.class);
       Assertions.assertThat(mapper.selectValue(null)).isEqualTo("default");
-    } finally {
-      sqlSession.close();
     }
 
   }
@@ -95,12 +92,9 @@ public class CustomizationTest {
          .isEqualTo("customObjectFactory");
     Assertions.assertThat(cache.getName()).isEqualTo("customCache");
 
-    SqlSession sqlSession = factory.openSession();
-    try {
+    try (SqlSession sqlSession = factory.openSession()) {
       CustomDefaultValueSeparatorMapper mapper = sqlSession.getMapper(CustomDefaultValueSeparatorMapper.class);
       Assertions.assertThat(mapper.selectValue("3333")).isEqualTo("3333");
-    } finally {
-      sqlSession.close();
     }
 
   }

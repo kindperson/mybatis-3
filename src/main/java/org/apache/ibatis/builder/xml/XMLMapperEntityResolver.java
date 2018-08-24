@@ -40,7 +40,7 @@ public class XMLMapperEntityResolver implements EntityResolver {
   private static final String MYBATIS_CONFIG_DTD = "org/apache/ibatis/builder/xml/mybatis-3-config.dtd";
   private static final String MYBATIS_MAPPER_DTD = "org/apache/ibatis/builder/xml/mybatis-3-mapper.dtd";
 
-  /*
+  /**
    * Converts a public DTD into a local one
    * 
    * @param publicId The public id that is what comes after "PUBLIC"

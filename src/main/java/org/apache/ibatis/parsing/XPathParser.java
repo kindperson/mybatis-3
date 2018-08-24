@@ -44,7 +44,7 @@ import org.xml.sax.SAXParseException;
  */
 public class XPathParser {
 
-  private Document document;
+  private final Document document;
   private boolean validation;
   private EntityResolver entityResolver;
   private Properties variables;
@@ -210,7 +210,7 @@ public class XPathParser {
   }
 
   public List<XNode> evalNodes(Object root, String expression) {
-    List<XNode> xnodes = new ArrayList<XNode>();
+    List<XNode> xnodes = new ArrayList<>();
     NodeList nodes = (NodeList) evaluate(expression, root, XPathConstants.NODESET);
     for (int i = 0; i < nodes.getLength(); i++) {
       xnodes.add(new XNode(this, nodes.item(i), variables));

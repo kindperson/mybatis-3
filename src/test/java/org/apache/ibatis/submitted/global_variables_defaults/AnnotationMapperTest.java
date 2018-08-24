@@ -47,14 +47,10 @@ public class AnnotationMapperTest {
 
     Assertions.assertThat(cache.getName()).isEqualTo("default");
 
-    SqlSession sqlSession = factory.openSession();
-    try {
+    try (SqlSession sqlSession = factory.openSession()) {
       AnnotationMapper mapper = sqlSession.getMapper(AnnotationMapper.class);
 
       Assertions.assertThat(mapper.ping()).isEqualTo("Hello");
-
-    } finally {
-      sqlSession.close();
     }
 
   }
@@ -75,14 +71,10 @@ public class AnnotationMapperTest {
 
     Assertions.assertThat(cache.getName()).isEqualTo("custom");
 
-    SqlSession sqlSession = factory.openSession();
-    try {
+    try (SqlSession sqlSession = factory.openSession()) {
       AnnotationMapper mapper = sqlSession.getMapper(AnnotationMapper.class);
 
       Assertions.assertThat(mapper.ping()).isEqualTo("Hi");
-
-    } finally {
-      sqlSession.close();
     }
 
   }

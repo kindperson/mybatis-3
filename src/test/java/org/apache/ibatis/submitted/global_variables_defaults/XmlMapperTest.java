@@ -44,16 +44,12 @@ public class XmlMapperTest {
 
     Assertions.assertThat(cache.getName()).isEqualTo("default");
 
-    SqlSession sqlSession = factory.openSession();
-    try {
+    try (SqlSession sqlSession = factory.openSession()) {
       XmlMapper mapper = sqlSession.getMapper(XmlMapper.class);
 
       Assertions.assertThat(mapper.ping()).isEqualTo("Hello");
       Assertions.assertThat(mapper.selectOne()).isEqualTo("1");
       Assertions.assertThat(mapper.selectFromVariable()).isEqualTo("9999");
-
-    } finally {
-      sqlSession.close();
     }
 
   }
@@ -75,16 +71,12 @@ public class XmlMapperTest {
 
     Assertions.assertThat(cache.getName()).isEqualTo("custom");
 
-    SqlSession sqlSession = factory.openSession();
-    try {
+    try (SqlSession sqlSession = factory.openSession()) {
       XmlMapper mapper = sqlSession.getMapper(XmlMapper.class);
 
       Assertions.assertThat(mapper.ping()).isEqualTo("Hi");
       Assertions.assertThat(mapper.selectOne()).isEqualTo("1");
       Assertions.assertThat(mapper.selectFromVariable()).isEqualTo("5555");
-
-    } finally {
-      sqlSession.close();
     }
 
   }

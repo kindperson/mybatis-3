@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2018 the original author or authors.
+ *    Copyright 2009-2017 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -65,8 +65,9 @@ public class XMLConfigBuilder extends BaseBuilder {
   /**
    * 数据源配置信息
    */
+  private final XPathParser parser;
   private String environment;
-  private ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();
+  private final ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();
 
   /**
    * 字符流形式的xml创建

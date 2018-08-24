@@ -70,7 +70,7 @@ public abstract class BaseBuilder {
 
   protected Set<String> stringSetValueOf(String value, String defaultValue) {
     value = (value == null ? defaultValue : value);
-    return new HashSet<String>(Arrays.asList(value.split(",")));
+    return new HashSet<>(Arrays.asList(value.split(",")));
   }
 
   protected JdbcType resolveJdbcType(String alias) {
@@ -118,7 +118,7 @@ public abstract class BaseBuilder {
     }
   }
 
-  protected Class<?> resolveClass(String alias) {
+  protected <T> Class<? extends T> resolveClass(String alias) {
     if (alias == null) {
       return null;
     }
@@ -155,7 +155,7 @@ public abstract class BaseBuilder {
     return handler;
   }
 
-  protected Class<?> resolveAlias(String alias) {
+  protected <T> Class<? extends T> resolveAlias(String alias) {
     return typeAliasRegistry.resolveAlias(alias);
   }
 }
