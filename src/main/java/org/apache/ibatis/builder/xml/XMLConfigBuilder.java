@@ -61,11 +61,10 @@ public class XMLConfigBuilder extends BaseBuilder {
   /**
    * xml 解析类
    */
-  private XPathParser parser;
+  private final XPathParser parser;
   /**
    * 数据源配置信息
    */
-  private final XPathParser parser;
   private String environment;
   private final ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();
 
