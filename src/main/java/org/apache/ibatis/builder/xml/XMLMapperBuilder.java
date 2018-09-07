@@ -89,6 +89,7 @@ public class XMLMapperBuilder extends BaseBuilder {
 
   public void parse() {
     if (!configuration.isResourceLoaded(resource)) {
+      //解析Mapper文件
       configurationElement(parser.evalNode("/mapper"));
       configuration.addLoadedResource(resource);
       bindMapperForNamespace();
@@ -103,18 +104,28 @@ public class XMLMapperBuilder extends BaseBuilder {
     return sqlFragments.get(refid);
   }
 
+  //解析Mapper文件方法：
+//（解析后的大部分内容都存储在MapperBuilderAssistant-》BaseBuilder-》Configuration对象中
+  //Configuration类下的属性：)
   private void configurationElement(XNode context) {
     try {
       String namespace = context.getStringAttribute("namespace");
+      //在Mybatis3中mapper元素必须定义命名空间
       if (namespace == null || namespace.equals("")) {
         throw new BuilderException("Mapper's namespace cannot be empty");
       }
       builderAssistant.setCurrentNamespace(namespace);
+      //解析cache-ref节点,从其它命名空间引用缓存配置
       cacheRefElement(context.evalNode("cache-ref"));
+      //解析cache节点,配置给定命名空间的缓存
       cacheElement(context.evalNode("cache"));
+      //解析parameterMap节点
       parameterMapElement(context.evalNodes("/mapper/parameterMap"));
+      //解析resultMap节点
       resultMapElements(context.evalNodes("/mapper/resultMap"));
+      //解析sql节点
       sqlElement(context.evalNodes("/mapper/sql"));
+      //解析select|insert|update|delete节点
       buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing Mapper XML. The XML location is '" + resource + "'. Cause: " + e, e);
@@ -184,6 +195,10 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 共用其他命名空间的缓存方式
+   * @param context
+   */
   private void cacheRefElement(XNode context) {
     if (context != null) {
       configuration.addCacheRef(builderAssistant.getCurrentNamespace(), context.getStringAttribute("namespace"));
@@ -196,15 +211,26 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 给命名空间添加缓存
+   * @param context
+   * @throws Exception
+   */
   private void cacheElement(XNode context) throws Exception {
     if (context != null) {
+      //类型
       String type = context.getStringAttribute("type", "PERPETUAL");
       Class<? extends Cache> typeClass = typeAliasRegistry.resolveAlias(type);
+      //缓存收回策略
       String eviction = context.getStringAttribute("eviction", "LRU");
       Class<? extends Cache> evictionClass = typeAliasRegistry.resolveAlias(eviction);
+      //刷新间隔
       Long flushInterval = context.getLongAttribute("flushInterval");
+      //缓存数量
       Integer size = context.getIntAttribute("size");
+      //是否只读
       boolean readWrite = !context.getBooleanAttribute("readOnly", false);
+      //是否锁定
       boolean blocking = context.getBooleanAttribute("blocking", false);
       Properties props = context.getChildrenAsProperties();
       builderAssistant.useNewCache(typeClass, evictionClass, flushInterval, size, readWrite, blocking, props);

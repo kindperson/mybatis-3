@@ -128,19 +128,34 @@ public class XMLConfigBuilder extends BaseBuilder {
   private void parseConfiguration(XNode root) {
     try {
       //issue #117 read properties first
+      //加载properties文件配置
       propertiesElement(root.evalNode("properties"));
+
+      //加载setting的propertis
       Properties settings = settingsAsProperties(root.evalNode("settings"));
+
       loadCustomVfs(settings);
+      //解析子节点typeAliases  java类的别名
       typeAliasesElement(root.evalNode("typeAliases"));
+      //解析子节点plugins 插件
       pluginElement(root.evalNode("plugins"));
+      //解析子节点objectFactory mybatis为结果创建对象时都会用到objectFactory
       objectFactoryElement(root.evalNode("objectFactory"));
+      //解析子节点objectWrapperFactory
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
+
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
+      //解析settings定义一些全局性的配置
       settingsElement(settings);
       // read it after objectFactory and objectWrapperFactory issue #631
+      //解析environments 可以配置多个运行环境，但是每个SqlSessionFactory 实例只能选择一个运行环境
       environmentsElement(root.evalNode("environments"));
+      //解析databaseIdProvider MyBatis能够执行不同的语句取决于你提供的数据库供应商。许多数据库供应商的支持是基于databaseId映射
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
+      //解析typeHandlers 当MyBatis设置参数到PreparedStatement 或者从ResultSet 结果集中取得值时，
+      // 就会使用TypeHandler  来处理数据库类型与java 类型之间转换
       typeHandlerElement(root.evalNode("typeHandlers"));
+      //解析mappers 主要的crud操作都是在mappers中定义的
       mapperElement(root.evalNode("mappers"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
@@ -384,10 +399,14 @@ public class XMLConfigBuilder extends BaseBuilder {
   private void mapperElement(XNode parent) throws Exception {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
+         //批量加载映射配置文件,mybatis自动扫描包下面的mapper接口进行加载 遵循一定的规范：
+        // 需要将mapper接口类名和mapper.xml映射文件名称保持一致，且在一个目录中；
+        // 上边规范的前提是：使用的是mapper代理方法;
         if ("package".equals(child.getName())) {
           String mapperPackage = child.getStringAttribute("name");
           configuration.addMappers(mapperPackage);
         } else {
+          //此处是支持加载xml，不建议使用这个方法
           String resource = child.getStringAttribute("resource");
           String url = child.getStringAttribute("url");
           String mapperClass = child.getStringAttribute("class");

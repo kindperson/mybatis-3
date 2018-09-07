@@ -29,19 +29,22 @@ import org.apache.ibatis.logging.LogFactory;
 
 /**
  * Provides a very simple API for accessing resources within an application server.
- * 
+ * 一个简单访问服务器资源的api
  * @author Ben Gunter
  */
 public abstract class VFS {
   private static final Log log = LogFactory.getLog(VFS.class);
 
   /** The built-in implementations. */
+  //默认的vfs实现方式，和JBoss6方式实现的vfs
   public static final Class<?>[] IMPLEMENTATIONS = { JBoss6VFS.class, DefaultVFS.class };
 
   /** The list to which implementations are added by {@link #addImplClass(Class)}. */
+  //自定义vfs实现的集合
   public static final List<Class<? extends VFS>> USER_IMPLEMENTATIONS = new ArrayList<>();
 
   /** Singleton instance holder. */
+  //单例模式创建vfs
   private static class VFSHolder {
     static final VFS INSTANCE = createVFS();
 
@@ -58,7 +61,7 @@ public abstract class VFS {
         Class<? extends VFS> impl = impls.get(i);
         try {
           vfs = impl.newInstance();
-          if (vfs == null || !vfs.isValid()) {
+          if (vfs == null || !vfs.isValid()) {//当前vfs是null，或者是无效的实现
             if (log.isDebugEnabled()) {
               log.debug("VFS implementation " + impl.getName() +
                   " is not valid in this environment.");
@@ -102,6 +105,7 @@ public abstract class VFS {
   }
 
   /** Get a class by name. If the class is not found then return null. */
+  //通过类的名字加载类，如果不存在这个类则返回null
   protected static Class<?> getClass(String className) {
     try {
       return Thread.currentThread().getContextClassLoader().loadClass(className);
@@ -116,7 +120,7 @@ public abstract class VFS {
 
   /**
    * Get a method by name and parameter types. If the method is not found then return null.
-   * 
+   *  通过类，类的方法名，以及类方法的参数获取类的方法
    * @param clazz The class to which the method belongs.
    * @param methodName The name of the method.
    * @param parameterTypes The types of the parameters accepted by the method.
@@ -138,10 +142,10 @@ public abstract class VFS {
 
   /**
    * Invoke a method on an object and return whatever it returns.
-   * 
-   * @param method The method to invoke.
-   * @param object The instance or class (for static methods) on which to invoke the method.
-   * @param parameters The parameters to pass to the method.
+   * 调用类的方法，并返回方法对应的返回值
+   * @param method The method to invoke. 要调用的方法
+   * @param object The instance or class (for static methods) on which to invoke the method. 调用该方法的类
+   * @param parameters The parameters to pass to the method. 调用发法时，需要传递的参数
    * @return Whatever the method returns.
    * @throws IOException If I/O errors occur
    * @throws RuntimeException If anything else goes wrong
@@ -165,7 +169,7 @@ public abstract class VFS {
   /**
    * Get a list of {@link URL}s from the context classloader for all the resources found at the
    * specified path.
-   * 
+   *  根据加载器查找当前路径下的所有执行的路径
    * @param path The resource path.
    * @return A list of {@link URL}s, as returned by {@link ClassLoader#getResources(String)}.
    * @throws IOException If I/O errors occur
@@ -175,12 +179,13 @@ public abstract class VFS {
   }
 
   /** Return true if the {@link VFS} implementation is valid for the current environment. */
+  //返回值是true的时候，说明该实现是有效的实现
   public abstract boolean isValid();
 
   /**
    * Recursively list the full resource path of all the resources that are children of the
    * resource identified by a URL.
-   * 
+   * 递归获取所有的路径以及子路径
    * @param url The URL that identifies the resource to list.
    * @param forPath The path to the resource that is identified by the URL. Generally, this is the
    *            value passed to {@link #getResources(String)} to get the resource URL.
@@ -192,13 +197,14 @@ public abstract class VFS {
   /**
    * Recursively list the full resource path of all the resources that are children of all the
    * resources found at the specified path.
-   * 
+   *  通过制定路径递归获取完整的资源路径以及子资源路径
    * @param path The path of the resource(s) to list.
    * @return A list containing the names of the child resources.
    * @throws IOException If I/O errors occur
    */
   public List<String> list(String path) throws IOException {
     List<String> names = new ArrayList<>();
+    List<URL> paths = getResources(path);
     for (URL url : getResources(path)) {
       names.addAll(list(url, path));
     }
