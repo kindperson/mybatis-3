@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2016 the original author or authors.
+ *    Copyright 2009-2017 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public abstract class BaseExecutor implements Executor {
   protected PerpetualCache localOutputParameterCache;
   protected Configuration configuration;
 
-  protected int queryStack = 0;
+  protected int queryStack;
   private boolean closed;
 
   protected BaseExecutor(Configuration configuration, Transaction transaction) {
@@ -198,14 +198,13 @@ public abstract class BaseExecutor implements Executor {
     }
     CacheKey cacheKey = new CacheKey();
     cacheKey.update(ms.getId());
-    cacheKey.update(Integer.valueOf(rowBounds.getOffset()));
-    cacheKey.update(Integer.valueOf(rowBounds.getLimit()));
+    cacheKey.update(rowBounds.getOffset());
+    cacheKey.update(rowBounds.getLimit());
     cacheKey.update(boundSql.getSql());
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
     TypeHandlerRegistry typeHandlerRegistry = ms.getConfiguration().getTypeHandlerRegistry();
     // mimic DefaultParameterHandler logic
-    for (int i = 0; i < parameterMappings.size(); i++) {
-      ParameterMapping parameterMapping = parameterMappings.get(i);
+    for (ParameterMapping parameterMapping : parameterMappings) {
       if (parameterMapping.getMode() != ParameterMode.OUT) {
         Object value;
         String propertyName = parameterMapping.getProperty();

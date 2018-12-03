@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2016 the original author or authors.
+ *    Copyright 2009-2017 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import static com.googlecode.catchexception.apis.BDDCatchException.*;
+import static org.assertj.core.api.BDDAssertions.then;
 
 public class ReflectorTest {
 
@@ -159,5 +161,53 @@ public class ReflectorTest {
   }
 
   static class Child extends Parent<String> {
+  }
+
+  @Test
+  public void shouldResoleveReadonlySetterWithOverload() throws Exception {
+    class BeanClass implements BeanInterface<String> {
+      @Override
+      public void setId(String id) {
+        // Do nothing
+      }
+    }
+    ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
+    Reflector reflector = reflectorFactory.findForClass(BeanClass.class);
+    assertEquals(String.class, reflector.getSetterType("id"));
+  }
+
+  interface BeanInterface<T> {
+    void setId(T id);
+  }
+
+  @Test
+  public void shouldSettersWithUnrelatedArgTypesThrowException() throws Exception {
+    @SuppressWarnings("unused")
+    class BeanClass {
+      public void setTheProp(String arg) {}
+      public void setTheProp(Integer arg) {}
+    }
+
+    ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
+    when(reflectorFactory).findForClass(BeanClass.class);
+    then(caughtException()).isInstanceOf(ReflectionException.class)
+      .hasMessageContaining("theProp")
+      .hasMessageContaining("BeanClass")
+      .hasMessageContaining("java.lang.String")
+      .hasMessageContaining("java.lang.Integer");
+  }
+
+  @Test
+  public void shouldAllowTwoBooleanGetters() throws Exception {
+    @SuppressWarnings("unused")
+    class Bean {
+      // JavaBean Spec allows this (see #906)
+      public boolean isBool() {return true;}
+      public boolean getBool() {return false;}
+      public void setBool(boolean bool) {}
+    }
+    ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
+    Reflector reflector = reflectorFactory.findForClass(Bean.class);
+    assertTrue((Boolean)reflector.getGetInvoker("bool").invoke(new Bean(), new Byte[0]));
   }
 }
