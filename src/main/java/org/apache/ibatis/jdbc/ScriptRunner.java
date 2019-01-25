@@ -269,6 +269,10 @@ public class ScriptRunner {
     }
   }
 
+  /**
+   * 打印信息到控制台，不换行
+   * @param o
+   */
   private void print(Object o) {
     if (logWriter != null) {
       logWriter.print(o);
@@ -276,6 +280,10 @@ public class ScriptRunner {
     }
   }
 
+  /**
+   * 打印信息到控制台，换行
+   * @param o
+   */
   private void println(Object o) {
     if (logWriter != null) {
       logWriter.println(o);
@@ -283,6 +291,10 @@ public class ScriptRunner {
     }
   }
 
+  /**
+   * 打印错误日志到控制台
+   * @param o
+   */
   private void printlnError(Object o) {
     if (errorLogWriter != null) {
       errorLogWriter.println(o);

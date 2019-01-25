@@ -680,6 +680,7 @@ public class Configuration {
   }
 
   public MappedStatement getMappedStatement(String id, boolean validateIncompleteStatements) {
+    //先构建所有语句，再返回语句
     if (validateIncompleteStatements) {
       buildAllStatements();
     }

@@ -18,7 +18,7 @@ package org.apache.ibatis.builder;
 import java.util.HashMap;
 
 /**
- * Inline parameter expression parser. Supported grammar (simplified):
+ * Inline parameter expression parsing. Supported grammar (simplified):
  * 
  * <pre>
  * inline-parameter = (propertyName | expression) oldJdbcType attributes

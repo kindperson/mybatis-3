@@ -71,9 +71,11 @@ public class DefaultSqlSession implements SqlSession {
     return this.<T>selectOne(statement, null);
   }
 
+  //查询一条的关键方法
   @Override
   public <T> T selectOne(String statement, Object parameter) {
     // Popular vote was to return null on 0 results and throw exception on too many.
+    //转而去调用selectList,很简单的，如果得到0条则返回null，得到1条则返回1条，得到多条报TooManyResultsException错
     List<T> list = this.<T>selectList(statement, parameter);
     if (list.size() == 1) {
       return list.get(0);
@@ -141,10 +143,13 @@ public class DefaultSqlSession implements SqlSession {
     return this.selectList(statement, parameter, RowBounds.DEFAULT);
   }
 
+  //核心selectList
   @Override
   public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
     try {
+      //根据statement id找到对应的MappedStatement
       MappedStatement ms = configuration.getMappedStatement(statement);
+      //转而用执行器来查询结果,注意这里传入的ResultHandler是null
       return executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
     } catch (Exception e) {
       throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);
