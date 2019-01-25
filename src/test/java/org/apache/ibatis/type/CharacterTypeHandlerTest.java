@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2016 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ public class CharacterTypeHandlerTest extends BaseTypeHandlerTest {
   @Test
   public void shouldGetResultNullFromResultSetByPosition() throws Exception {
     when(rs.getString(1)).thenReturn(null);
-    when(rs.wasNull()).thenReturn(false);
+    when(rs.wasNull()).thenReturn(true);
     assertNull(TYPE_HANDLER.getResult(rs, 1));
   }
 
@@ -82,7 +82,7 @@ public class CharacterTypeHandlerTest extends BaseTypeHandlerTest {
   @Override
   @Test
   public void shouldGetResultNullFromCallableStatement() throws Exception {
-    when(cs.getString("column")).thenReturn(null);
+    when(cs.getString(1)).thenReturn(null);
     when(cs.wasNull()).thenReturn(true);
     assertNull(TYPE_HANDLER.getResult(cs, 1));
   }
